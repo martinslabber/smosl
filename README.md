@@ -19,6 +19,14 @@ eg. ::
 
     app1:database:open_connections=5 app1:database:last_error="out of memory"
 
+Installation
+-------------
+
+::
+
+        cp smosl.py /usr/local/bin/smosl.py
+        cp 100-smosl.conf /etc/rsyslog.d/.
+        sudo service ryslog restart 
 
 Value Types
 -------------

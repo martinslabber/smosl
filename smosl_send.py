@@ -2,6 +2,7 @@
 
 import zlib
 import logging
+import logging.handlers
 
 
 class SmoslMetric(object):
@@ -14,6 +15,7 @@ class SmoslMetric(object):
             self._address = (server, port or 514)
 
         self._logger = logging.getLogger('smosl')
+        self._setup_logger()
         if path:
             self.path = path
 
@@ -23,9 +25,8 @@ class SmoslMetric(object):
 
         ## Attach Syslog as a handler
         syslog_handler = logging.handlers.SysLogHandler(address=self._address)
-        syslog_handler.setLevel(logging.WARNING)
-        syslog_handler.setFormatter(logging.Formatter(
-            'metric: %(message)s'))
+        syslog_handler.setLevel(logging.INFO)
+        syslog_handler.setFormatter(logging.Formatter('metric: %(message)s'))
         self._logger.addHandler(syslog_handler)
 
     def _send(self, msg):
@@ -72,8 +73,8 @@ class SmoslMetric(object):
         """Keep track of metrics and values. Send if there was a change."""
         send_update = {}
         for kwkey, value in kwargs.iteritems():
-            akey = zlib.adler32(kwkey)
-            aval = zlib.adler32(value)
+            akey = zlib.adler32(str(kwkey))
+            aval = zlib.adler32(str(value))
             if self._change_detection.get(akey) != aval:
                 self._change_detection[akey] = aval
                 send_update[kwkey] = value
@@ -92,6 +93,7 @@ class SmoslMetric(object):
 
 def arg_parse():
     """
+    Not implimented but something like this.
     -h, --help Print help and exit
     -V, --version Print version and exit
     -n, --name=STRING Name of the metric
@@ -119,5 +121,5 @@ if __name__ == "__main__":
     metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
     metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
     metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tulis'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tulis', 'chicken': True})
     metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
