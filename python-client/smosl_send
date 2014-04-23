@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+
+import argparse
+
+import smosl
+
+def arg_parse():
+    """
+    Not implimented but something like this.
+    -h, --help Print help and exit
+    -V, --version Print version and exit
+    -n, --name=STRING Name of the metric
+    -v, --value=STRING Value of the metric
+    -t, --type=STRING Either string|int|float|boolean
+    -h, --host=STRING host to send to
+    -p, --port=INT port to use
+    -t, --tcp use tcp not udp.
+    -d, --device=STRING use device other than /dev/log - Cannot use with -p or -h
+    """
+    pass
+
+if __name__ == "__main__":
+    metric = smosl.SmoslMetric(path='powerstation:reactor:turbine', server='192.168.10.70')
+    metric.send(rpm=3003, l='hjjk')
+    metric.send_one("monkey:man:and:the:spider", 'sleep tuli')
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tulis', 'chicken': True})
+    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})

@@ -1,5 +1,5 @@
-#!/usr/bin/env python
 
+import sys
 import zlib
 import logging
 import logging.handlers
@@ -11,6 +11,8 @@ class SmoslMetric(object):
         self._path = []
         self._address = '/dev/log'
         self._change_detection = {}
+        if sys.platform == "darwin":
+            self._address = "/var/run/syslog"
         if server:
             self._address = (server, port or 514)
 
@@ -32,7 +34,6 @@ class SmoslMetric(object):
     def _send(self, msg):
         """Send the message to syslog."""
         self._logger.info(msg)
-        print msg
 
     @property
     def path(self):
@@ -46,6 +47,16 @@ class SmoslMetric(object):
             self._path = value
         else:
             self._path = str(value).split(":")
+
+    def attache_console(self, format=None):
+        """attach the console to Log messages."""
+        # TODO(MS): Attach the console to the logger.
+        #syslog_handler = logging.handlers.StreamHandler()
+        #syslog_handler.setLevel(logging.INFO)
+        #syslog_handler.setFormatter(logging.Formatter('Metrics: %(message)s'))
+        # '%(levelname)s:%(filename)s:%(lineno)d -- %(message)s'
+        #self._logger.addHandler(syslog_handler)
+        pass
 
     def send_one(self, metric_name, metric_value):
         """Send one metric value."""
@@ -89,37 +100,3 @@ class SmoslMetric(object):
 
         """
         self._change_detection = {}
-
-
-def arg_parse():
-    """
-    Not implimented but something like this.
-    -h, --help Print help and exit
-    -V, --version Print version and exit
-    -n, --name=STRING Name of the metric
-    -v, --value=STRING Value of the metric
-    -t, --type=STRING Either string|int|float|boolean
-    -h, --host=STRING host to send to
-    -p, --port=INT port to use
-    -t, --tcp use tcp not udp.
-    -d, --device=STRING use device other than /dev/log - Cannot use with -p or -h
-    """
-    pass
-
-if __name__ == "__main__":
-    metric = SmoslMetric(path='powerstation:reactor:turbine', server='192.168.10.70')
-    metric.send(rpm=3003, l='hjjk')
-    metric.send_one("monkey:man:and:the:spider", 'sleep tuli')
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tulis', 'chicken': True})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
