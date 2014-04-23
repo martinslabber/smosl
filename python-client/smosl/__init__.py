@@ -50,13 +50,12 @@ class SmoslMetric(object):
 
     def attache_console(self, format=None):
         """attach the console to Log messages."""
-        # TODO(MS): Attach the console to the logger.
-        #syslog_handler = logging.handlers.StreamHandler()
-        #syslog_handler.setLevel(logging.INFO)
-        #syslog_handler.setFormatter(logging.Formatter('Metrics: %(message)s'))
-        # '%(levelname)s:%(filename)s:%(lineno)d -- %(message)s'
-        #self._logger.addHandler(syslog_handler)
-        pass
+        console_handler = logging.handlers.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+        console_handler.setFormatter(
+            logging.Formatter('%(levelname)s:%(filename)s:%(lineno)d -- '
+                              '%(message)s'))
+        self._logger.addHandler(console_handler)
 
     def send_one(self, metric_name, metric_value):
         """Send one metric value."""
