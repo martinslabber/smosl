@@ -19,7 +19,7 @@ class SmoslMetric(object):
         self._logger = logging.getLogger('smosl')
         self._setup_logger()
         if path:
-            self.path = path
+            self.path = [n for n in path if n]
 
     def _setup_logger(self):
         """Configure the python logger."""
@@ -50,7 +50,7 @@ class SmoslMetric(object):
 
     def attache_console(self, format=None):
         """attach the console to Log messages."""
-        console_handler = logging.handlers.StreamHandler()
+        console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.INFO)
         console_handler.setFormatter(
             logging.Formatter('%(levelname)s:%(filename)s:%(lineno)d -- '
