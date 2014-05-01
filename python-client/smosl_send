@@ -1,38 +1,121 @@
 #!/usr/bin/env python
 
+import sys
 import argparse
 
 import smosl
 
 def arg_parse():
     """
-    Not implimented but something like this.
-    -h, --help Print help and exit
-    -V, --version Print version and exit
-    -n, --name=STRING Name of the metric
-    -v, --value=STRING Value of the metric
-    -t, --type=STRING Either string|int|float|boolean
+    Not implemented but something like this.
     -h, --host=STRING host to send to
     -p, --port=INT port to use
     -t, --tcp use tcp not udp.
     -d, --device=STRING use device other than /dev/log - Cannot use with -p or -h
     """
-    pass
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', '--name', dest='metric_name', action='store',
+                        help='Name of the metric.')
+    parser.add_argument('-v', '--value', dest='metric_value', action='store',
+                        help='Value of the metric.')
+    parser.add_argument('-t', '--type', dest='metric_type', action='store',
+                        choices=['text', 'number', 'boolean'],
+                        help='Type of the metric.')
+    parser.add_argument('-i', '--stdin', dest='use_stdin', action='store_true',
+                        help='Metric data is received on standard in.')
+    parser.add_argument('-q', '--quiet', dest='quiet', action='store_true',
+                        help='Suppress the message. '
+                             'No Error messages will be printed.')
+    return vars(parser.parse_args())
+
+def send(service, metric_name, metric_value, metric_type=None):
+    """Send one metric to syslog.
+
+    Parameters
+    ----------
+    service: Smosl Object
+        A Smosl object to use.
+
+    metric_name: str
+        Name of the metric
+
+    metric_value: str
+        Value of metric
+
+    metric_type: str
+        Type of metric
+
+    """
+    custom_none = '++This is not possible to send++'
+    if metric_type == 'boolean':
+        try:
+            if metric_value is None:
+                value = None
+            else:
+                value = bool(metric_value)
+        except ValueError as e:
+            print e
+            value = custom_none
+
+    elif metric_type == 'number':
+        try:
+            value = float(metric_value)
+        except ValueError as e:
+            print e
+            value = custom_none
+    else:
+        if metric_value:
+            value = str(metric_value)
+        else:
+            print "Value did not work: {0}".format(metric_value)
+            value = custom_none
+
+    if value is not custom_none:
+        service.send_one(metric_name, value)
+
+def stdin_func_factory(settings):
+    """Return the function to use for string parsing in STDIN mode.
+
+    Parameters
+    ----------
+    settings: dict
+        Dictionary with the settings.
+
+    Returns
+    -------
+    func
+        The function to use for line parsing.
+
+    """
+    if settings.get('metric_name'):
+        # Each line is treated as a metric value.
+        def parse_line(service, line):
+            send(service, settings.get('metric_name'),
+                 line.strip(), settings.get('metric_type'))
+    else:
+        # Each line is treated as metric name and metric value
+        # separated by a '='
+        def parse_line(service, line):
+            segments = line.strip().split('=', 1)
+            if len(segments) > 1:
+                send(service, segments[0], segments[1])
+    return parse_line
 
 if __name__ == "__main__":
-    metric = smosl.SmoslMetric(path='powerstation:reactor:turbine', server='192.168.10.70')
-    metric.send(rpm=3003, l='hjjk')
-    metric.send_one("monkey:man:and:the:spider", 'sleep tuli')
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tulis', 'chicken': True})
-    metric.send_on_change(**{"monkey:man:and:the:spider": 'sleep tuli'})
+    settings = arg_parse()
+    print settings
+
+    metric = smosl.SmoslMetric()
+    if settings.get('metric_name') and settings.get('metric_value'):
+        send(metric, settings.get('metric_name'),
+             settings.get('metric_value'), settings.get('metric_type'))
+
+    if settings.get('use_stdin'):
+        stdin_func = stdin_func_factory(settings)
+        counter = 0
+        while 1:
+            try:
+                stdin_func(metric, sys.stdin.readline())
+            except KeyboardInterrupt:
+                break
+#

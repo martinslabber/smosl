@@ -11,13 +11,17 @@ class SmoslMetric(object):
         self._path = []
         self._address = '/dev/log'
         self._change_detection = {}
+        self._log_level = logging.INFO
         if sys.platform == "darwin":
             self._address = "/var/run/syslog"
+            self._log_level = logging.WARN
         if server:
             self._address = (server, port or 514)
 
         self._logger = logging.getLogger('smosl')
         self._setup_logger()
+        if isinstance(path, str):
+            path = path.split(':')
         if path:
             self.path = [n for n in path if n]
 
@@ -27,13 +31,13 @@ class SmoslMetric(object):
 
         ## Attach Syslog as a handler
         syslog_handler = logging.handlers.SysLogHandler(address=self._address)
-        syslog_handler.setLevel(logging.INFO)
+        syslog_handler.setLevel(self._log_level)
         syslog_handler.setFormatter(logging.Formatter('metric: %(message)s'))
         self._logger.addHandler(syslog_handler)
 
     def _send(self, msg):
         """Send the message to syslog."""
-        self._logger.info(msg)
+        self._logger.log(self._log_level, '@smosl ' + msg)
 
     @property
     def path(self):
