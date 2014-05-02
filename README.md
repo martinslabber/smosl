@@ -42,10 +42,10 @@ Example: ::
     metric:name="The string value."
 
 Number
-^^^^^^^^^
+^^^^^^^
 
 * All numbers are converted to a floating point number.
-* If conversion fails value is discarded.
+* If conversion failed value is discarded.
 
 Example: ::
 
@@ -57,3 +57,8 @@ Boolean (True, False, Null, None)
 * Value is an 0 or 1
 * + or - or ? Could work nice for boolean and null.
 * T or F or N Could work nice for boolean and null.
+* Some problems arrised with Booleans. Propse the new syntax.
+
+::
+    metric:seg1:seg2=0&
+

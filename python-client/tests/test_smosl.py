@@ -23,3 +23,24 @@ class TestSMOSL(object):
         assert self.test_result == 'one=1'
         self.smosl.send_one('one', None)
         assert self.test_result == 'one=null'
+
+    def test_02_send(self):
+        self.smosl.send(**{'one': 1})
+        assert self.test_result == 'one=1'
+        self.smosl.send(one=1)
+        assert self.test_result == 'one=1'
+
+    def test_03_send_on_change(self):
+        self.smosl.send_on_change(**{'one': 1})
+        assert self.test_result == 'one=1'
+        self.smosl.send_on_change(one=1)
+        assert self.test_result == 'one=1'
+        self.smosl.send_on_change(one=2)
+        assert self.test_result == 'one=2'
+        self.test_result = '-'
+        self.smosl.send_on_change(one=2)
+        assert self.test_result == '-'
+        self.smosl.send_on_change(one=2)
+        assert self.test_result == '-'
+        self.smosl.send_on_change(one=3)
+        assert self.test_result == 'one=3'

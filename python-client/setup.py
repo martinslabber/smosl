@@ -1,4 +1,3 @@
-
 # SMOSL Setup.py
 
 from setuptools import setup, find_packages
@@ -8,7 +7,7 @@ setup(name='smosl',
       description='System Monitoring Over SysLog',
       author='martinslabber',
       url='https://github.com/martinslabber/smosl',
-      classifiers=["Development Status :: 3 - Alpha",
+      classifiers=["Development Status :: 4 - Beta",
                    "Intended Audience :: Developers",
                    "Operating System :: OS Independent",
                    "Programming Language :: Python"],
