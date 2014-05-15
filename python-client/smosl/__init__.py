@@ -68,7 +68,7 @@ class SmoslMetric(object):
     def send(self, **kwargs):
         """Send to syslog."""
         msg = []
-        for kwkey, value in kwargs.iteritems():
+        for kwkey, value in kwargs.items():
             key = ":".join(self._path + [kwkey])
             if value is None:
                 msg.append('{0}=null'.format(key))
@@ -86,9 +86,9 @@ class SmoslMetric(object):
     def send_on_change(self, **kwargs):
         """Keep track of metrics and values. Send if there was a change."""
         send_update = {}
-        for kwkey, value in kwargs.iteritems():
-            akey = zlib.adler32(str(kwkey))
-            aval = zlib.adler32(str(value))
+        for kwkey, value in kwargs.items():
+            akey = zlib.adler32(str(kwkey).encode('UTF-8'))
+            aval = zlib.adler32(str(value).encode('UTF-8'))
             if self._change_detection.get(akey) != aval:
                 self._change_detection[akey] = aval
                 send_update[kwkey] = value
