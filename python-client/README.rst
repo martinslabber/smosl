@@ -27,6 +27,9 @@ This example sends the meminfo of a Linux system to smosl.
 ::
     cat /proc/meminfo | sed -e " s/://" | awk '{ V=$2; if ($3 == "kB") V=V*1000; print $1"="V}' | smosl_send -t number -i
 
+This example sends the *sysctl* to SMOSL works on Linux and Mac. ::
+
+    sysctl -a | sed -e " s/:/=/g" | ./smosl_send -i -t number --path sysctl
 
 Metrics
 -------
