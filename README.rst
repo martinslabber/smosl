@@ -4,20 +4,17 @@ System Monitoring Over SysLog (SMOSL)
 
 ALPHA.! At the moment this is some old code pulled out of the closet and dumped here in the hope it will get structure.
 
-
 * Monitoring metrics are send through in the message part or a syslog message.
 * Metrics are space separated from one another
-* Strings values are always wrapped with '"' (double quotes)
-* Boolean True is 1, False is 0
-* Null (None) is null
-* Key is made up of sections separated with ':' (colon)
-* Key an value is separated with '=' (equals) no spaces
-* Keys are case insensitive. Keys are parsed to lower-case.
-* Keys can contain characters a-z 0-9 _ all other characters will be striped
+* Key is separated from value with '=' (equals) no spaces
 
-eg. ::
+eg.  ::
 
     app1:database:open_connections=5 app1:database:last_error="out of memory"
+
+The JSON equivalent would be. ::
+
+    {app1: {database: {open_connections: 5, last_error: "out of memory"}}}
 
 Installation
 -------------
@@ -28,13 +25,22 @@ Installation
         cp 100-smosl.conf /etc/rsyslog.d/.
         sudo service ryslog restart 
 
+Keys
+----
+
+The key contains a hierarchy, sections in the hierarchy are separated from one another with the ":" character.
+The key and all it sections are case insensitive and should only consist out of 'a' to 'z', '0' to '9' and the '_' character. 
+When key is processed the key will be converted to lower case, any character not in the above listed set will be dropped.
+
 Value Types
--------------
+-----------
 
-String - Text
-^^^^^^^^^^^^^^^^
+SMOSL has 3 data types, it is up to the client to force values into one of the following types: Text, Number and Boolean.
 
-* Value part must be surrounded by "="
+Text
+^^^^
+
+* Value part must be surrounded by '"' (double quotes).
 * Length of string is only limited by syslog implementation.
 
 Example: ::
@@ -42,22 +48,20 @@ Example: ::
     metric:name="The string value."
 
 Number
-^^^^^^^
+^^^^^^
 
 * All numbers are converted to a floating point number.
 * If conversion failed value is discarded.
 
 Example: ::
 
-    metric:name=24
+    metric:hour=24
 
 Boolean (True, False, Null, None)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* Value is an 0 or 1
-* + or - or ? Could work nice for boolean and null.
-* T or F or N Could work nice for boolean and null.
-* Some problems arrised with Booleans. Propse the new syntax.
+* T, F or N Could work nice for boolean and null.
+* The lack of a value (a space following '=') should be treated as a Null.
 
 ::
     metric:seg1:seg2=0&

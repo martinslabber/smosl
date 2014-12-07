@@ -41,6 +41,7 @@ class SmoslMetric(object):
 
     @property
     def path(self):
+        """The key hierarchy path for this class."""
         return self._path
 
     @path.setter
@@ -71,12 +72,12 @@ class SmoslMetric(object):
         for kwkey, value in kwargs.items():
             key = ":".join(self._path + [kwkey])
             if value is None:
-                msg.append('{0}=null'.format(key))
+                msg.append('{0}=N'.format(key))
             elif isinstance(value, str):
                 msg.append('{0}="{1}"'.format(key, str(value)))
             elif isinstance(value, bool):
-                msg.append('{0}={1}'.format(key, int(value)))
-            elif isinstance(value, int) or isinstance(value, float):
+                msg.append('{0}={1}'.format(key, str(value)[0]))
+            elif isinstance(value, (int, float)):
                 msg.append('{0}={1}'.format(key, value))
             else:
                 raise ValueError('Cannot interprete {0} of type {1}'.
@@ -96,10 +97,5 @@ class SmoslMetric(object):
             self.send(**send_update)
 
     def flush_on_change(self):
-        """Flush the on chnage detection storage.
-
-        It is good to this periodicaly in you system to send metric
-        even if it has not changed.
-
-        """
+        """Flush/Clear the on chnage detection storage."""
         self._change_detection = {}
