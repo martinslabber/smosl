@@ -28,14 +28,14 @@ Installation
 Keys
 ----
 
-The key contains a hierarchy, sections in the hierarchy are separated from one another with the ":" character.
+The key contain a hierarchy, sections in the hierarchy are separated from one another with the ':' character.
 The key and all it sections are case insensitive and should only consist out of 'a' to 'z', '0' to '9' and the '_' character. 
 When key is processed the key will be converted to lower case, any character not in the above listed set will be dropped.
 
 Value Types
 -----------
 
-SMOSL has 3 data types, it is up to the client to force values into one of the following types: Text, Number and Boolean.
+SMOSL has only 3 data types, it is up to the client to force values into one of the following types: Text, Number and Boolean.
 
 Text
 ^^^^
@@ -47,6 +47,10 @@ Example: ::
 
     metric:name="The string value."
 
+The JSON equivalent would be. ::
+
+    {metric: {hour: "The string value."}}
+
 Number
 ^^^^^^
 
@@ -57,12 +61,20 @@ Example: ::
 
     metric:hour=24
 
+The JSON equivalent would be. ::
+
+    {metric: {hour: 24}}
+
 Boolean (True, False, Null, None)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * T, F or N Could work nice for boolean and null.
-* The lack of a value (a space following '=') should be treated as a Null.
+* The lack of a value (a '=' followed by a space) should be treated as a Null.
 
 ::
-    metric:seg1:seg2=0&
 
+    metric:seg1:seg2=T
+
+The JSON equivalent would be. ::
+
+    {metric: {seg1: {seg2: true}}}

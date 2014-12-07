@@ -20,9 +20,9 @@ class TestSMOSL(object):
         self.smosl.send_one('one', 'just one')
         assert self.test_result == 'one="just one"'
         self.smosl.send_one('one', True)
-        assert self.test_result == 'one=1'
+        assert self.test_result == 'one=T'
         self.smosl.send_one('one', None)
-        assert self.test_result == 'one=null'
+        assert self.test_result == 'one=N'
 
     def test_02_send(self):
         self.smosl.send(**{'one': 1})
